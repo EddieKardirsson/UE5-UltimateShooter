@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "UObject/ObjectPtr.h"
+#include "InputActionValue.h"
 #include "ShooterCharacter.generated.h"
 
 UCLASS()
@@ -36,6 +37,20 @@ private:
 	/** Camera that follows the character and is attached to the spring arm */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UCameraComponent> ThirdPersonCamera;
+
+	/** InputMappingContext cache that handles the keybindings for corresponding InputActions.
+	 * Add the InputMappingContext blueprint IMC_ShooterCharacter on this slot */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "EnhancedInput | Context", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UInputMappingContext> PlayerContext;
+
+	/** InputAction cache for the movement. Add IA_Move to this slot */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "EnhancedInput | Actions", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UInputAction> MoveAction;
+
+protected:
+
+	/** Handles the player movement */
+	void Move(const FInputActionValue& Value);
 	
 public:
 
@@ -43,6 +58,6 @@ public:
 	FORCEINLINE USpringArmComponent* GetSpringArmComponent() const { return SpringArmComponent; }
 
 	/** Returns ThirdPersonCamera sub-object */
-	FORCEINLINE UCameraComponent* GetThirdPersonCamera() const { return ThirdPersonCamera; }
+	FORCEINLINE UCameraComponent* GetThirdPersonCamera() const { return ThirdPersonCamera; }	
 
 };
