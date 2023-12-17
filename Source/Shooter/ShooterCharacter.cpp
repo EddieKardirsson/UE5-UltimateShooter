@@ -65,6 +65,7 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	{
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AShooterCharacter::Move);
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AShooterCharacter::Look);
+		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &AShooterCharacter::Jump);
 	}
 
 }
@@ -98,5 +99,12 @@ void AShooterCharacter::Look(const FInputActionValue& Value)
 		AddControllerPitchInput(LookAxisVector.Y);
 	
 	AddControllerYawInput(LookAxisVector.X);
+}
+
+/** Configuration mainly handled by the parent class */
+void AShooterCharacter::Jump()
+{
+	// TODO: Add and if-statement to check health since that might otherwise bug out when player is dead.
+	Super::Jump();
 }
 

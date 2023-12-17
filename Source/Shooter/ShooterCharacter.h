@@ -54,6 +54,10 @@ private:
 	/** InputAction cache for the camera movement with mouse or right thumbstick */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "EnhancedInput | Movement", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UInputAction> LookAction;
+
+	/** InputAction cache for jumping */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "EnhancedInput | Movement", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UInputAction> JumpAction;
 	
 
 protected:
@@ -63,6 +67,9 @@ protected:
 
 	/** Handles the camera movement by either the mouse or the right thumbstick */
 	void Look(const FInputActionValue& Value);
+
+	/** Handles the player jumping, calls the parent function for the jumping functionality */
+	virtual void Jump() override;
 	
 public:
 
