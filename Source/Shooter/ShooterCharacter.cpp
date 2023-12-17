@@ -12,7 +12,8 @@
 #include "EnhancedInputComponent.h"
 
 // Sets default values
-AShooterCharacter::AShooterCharacter()
+AShooterCharacter::AShooterCharacter() :
+	bInvertPitchAxis(false)
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -63,6 +64,7 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	if(UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent))
 	{
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AShooterCharacter::Move);
+		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AShooterCharacter::Look);
 	}
 
 }
@@ -82,5 +84,19 @@ void AShooterCharacter::Move(const FInputActionValue& Value)
 
 	AddMovementInput(ForwardDirection, MovementVector.Y);
 	AddMovementInput(RightDirection, MovementVector.X);
+}
+
+/* Configuration for looking with the mouse or right thumbstick where the FInputActionValue calculates into
+ * the controller pitch and yaw to adjust the camera position. */
+void AShooterCharacter::Look(const FInputActionValue& Value)
+{
+	const FVector2D LookAxisVector = Value.Get<FVector2D>();
+
+	if(bInvertPitchAxis)
+		AddControllerPitchInput(-LookAxisVector.Y);
+	else	
+		AddControllerPitchInput(LookAxisVector.Y);
+	
+	AddControllerYawInput(LookAxisVector.X);
 }
 

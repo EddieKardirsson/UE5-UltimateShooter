@@ -38,19 +38,31 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UCameraComponent> ThirdPersonCamera;
 
+	/** This property is to invert the values for the camera pitch (i.e. Pilot mode) */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera", meta = (AllowPrivateAccess = "true"))
+	bool bInvertPitchAxis;
+	
 	/** InputMappingContext cache that handles the keybindings for corresponding InputActions.
 	 * Add the InputMappingContext blueprint IMC_ShooterCharacter on this slot */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "EnhancedInput | Context", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UInputMappingContext> PlayerContext;
 
 	/** InputAction cache for the movement. Add IA_Move to this slot */
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "EnhancedInput | Actions", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "EnhancedInput | Movement", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UInputAction> MoveAction;
+
+	/** InputAction cache for the camera movement with mouse or right thumbstick */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "EnhancedInput | Movement", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UInputAction> LookAction;
+	
 
 protected:
 
 	/** Handles the player movement */
 	void Move(const FInputActionValue& Value);
+
+	/** Handles the camera movement by either the mouse or the right thumbstick */
+	void Look(const FInputActionValue& Value);
 	
 public:
 
