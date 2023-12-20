@@ -10,6 +10,7 @@
 #include "InputMappingContext.h"
 #include "InputAction.h"
 #include "EnhancedInputComponent.h"
+#include "Engine/SkeletalMeshSocket.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -128,4 +129,11 @@ void AShooterCharacter::PrimaryAttack(const FInputActionValue& Value)
 	if(AttackSound) UGameplayStatics::SpawnSoundAtLocation(this, AttackSound, GetActorLocation());
 	//if(AttackSound) UGameplayStatics::PlaySoundAtLocation(this, AttackSound, GetActorLocation());
 	//if(AttackSound) UGameplayStatics::PlaySound2D(this, AttackSound);
+
+	if(const USkeletalMeshSocket* BarrelSocket = GetMesh()->GetSocketByName("BarrelSocket"))
+	{
+		const FTransform SocketTransform = BarrelSocket->GetSocketTransform(GetMesh());
+
+		if(MuzzleFlash) UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzleFlash, SocketTransform);
+	}
 }

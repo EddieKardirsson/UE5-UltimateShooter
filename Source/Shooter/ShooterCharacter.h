@@ -63,8 +63,13 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "EnhancedInput | Combat", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UInputAction> PrimaryAttackAction;
 
+	/** Randomized gunshot MetaSound, default blueprint should be MS_Shot */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio | Combat", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<USoundBase> AttackSound;
+
+	/** Flash spawned at BarrelSocket */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "VFX | Combat", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UParticleSystem> MuzzleFlash;
 
 protected:
 
