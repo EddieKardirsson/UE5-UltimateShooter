@@ -11,6 +11,7 @@
 #include "InputAction.h"
 #include "EnhancedInputComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AShooterCharacter::AShooterCharacter() :
@@ -50,7 +51,7 @@ void AShooterCharacter::BeginPlay()
 
 	/* Setup and Configuration of the Enhanced Input system. It gets the controller,
 	 * checks the subsystem and gets the local player and then connect the IMC to the controller. */
-	if(APlayerController* PlayerController = Cast<APlayerController>(GetController()))
+	if(const APlayerController* PlayerController = Cast<APlayerController>(GetController()))
 	{
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(
 			PlayerController->GetLocalPlayer()))
@@ -78,6 +79,8 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AShooterCharacter::Move);
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AShooterCharacter::Look);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &AShooterCharacter::Jump);
+		EnhancedInputComponent->BindAction(PrimaryAttackAction, ETriggerEvent::Started, this, &AShooterCharacter::PrimaryAttack);
+		EnhancedInputComponent->BindAction(PrimaryAttackAction, ETriggerEvent::Canceled, this, &AShooterCharacter::PrimaryAttack);
 	}
 
 }
@@ -120,3 +123,9 @@ void AShooterCharacter::Jump()
 	Super::Jump();
 }
 
+void AShooterCharacter::PrimaryAttack(const FInputActionValue& Value)
+{
+	if(AttackSound) UGameplayStatics::SpawnSoundAtLocation(this, AttackSound, GetActorLocation());
+	//if(AttackSound) UGameplayStatics::PlaySoundAtLocation(this, AttackSound, GetActorLocation());
+	//if(AttackSound) UGameplayStatics::PlaySound2D(this, AttackSound);
+}

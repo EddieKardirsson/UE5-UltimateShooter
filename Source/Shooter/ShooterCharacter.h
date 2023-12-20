@@ -58,7 +58,13 @@ private:
 	/** InputAction cache for jumping */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "EnhancedInput | Movement", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UInputAction> JumpAction;
-	
+
+	/** InputAction cache for primary attack */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "EnhancedInput | Combat", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UInputAction> PrimaryAttackAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio | Combat", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<USoundBase> AttackSound;
 
 protected:
 
@@ -70,6 +76,9 @@ protected:
 
 	/** Handles the player jumping, calls the parent function for the jumping functionality */
 	virtual void Jump() override;
+
+	/** Called when the primary attack button is pressed */
+	void PrimaryAttack(const FInputActionValue& Value);
 	
 public:
 
