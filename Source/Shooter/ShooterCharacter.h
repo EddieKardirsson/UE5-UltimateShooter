@@ -71,6 +71,10 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "VFX | Combat", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UParticleSystem> MuzzleFlash;
 
+	/** Montage for primary attack */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animations | Combat", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UAnimMontage> PrimaryAttackMontage;
+
 protected:
 
 	/** Handles the player movement */

@@ -135,5 +135,11 @@ void AShooterCharacter::PrimaryAttack(const FInputActionValue& Value)
 		const FTransform SocketTransform = BarrelSocket->GetSocketTransform(GetMesh());
 
 		if(MuzzleFlash) UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzleFlash, SocketTransform);
+	}	
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if(AnimInstance && PrimaryAttackMontage)
+	{
+		AnimInstance->Montage_Play(PrimaryAttackMontage);
+		AnimInstance->Montage_JumpToSection(FName("StartPrimaryFire"));
 	}
 }
