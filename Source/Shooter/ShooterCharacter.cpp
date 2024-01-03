@@ -13,6 +13,7 @@
 #include "Engine/SkeletalMeshSocket.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "DrawDebugHelpers.h"
 
 // Sets default values
 AShooterCharacter::AShooterCharacter() :
@@ -135,6 +136,23 @@ void AShooterCharacter::PrimaryAttack(const FInputActionValue& Value)
 		const FTransform SocketTransform = BarrelSocket->GetSocketTransform(GetMesh());
 
 		if(MuzzleFlash) UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), MuzzleFlash, SocketTransform);
+
+		FHitResult PrimaryAttackHitResult;
+		const FVector Start = SocketTransform.GetLocation();
+		const FQuat Rotation = SocketTransform.GetRotation();
+		const FVector RotationAxis = Rotation.GetAxisX();
+		const FVector End = Start + RotationAxis * 50000.f;
+
+		GetWorld()->LineTraceSingleByChannel(
+			PrimaryAttackHitResult, Start, End,
+			ECollisionChannel::ECC_Visibility
+		);
+		if(PrimaryAttackHitResult.bBlockingHit)
+		{
+			DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 2.f);
+			DrawDebugPoint(GetWorld(), PrimaryAttackHitResult.Location,
+				5.f, FColor::Red, false, 2.f);
+		}
 	}	
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	if(AnimInstance && PrimaryAttackMontage)
