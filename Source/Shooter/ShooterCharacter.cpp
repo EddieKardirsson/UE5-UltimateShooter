@@ -14,6 +14,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "DrawDebugHelpers.h"
+#include "Particles/ParticleSystemComponent.h"
 
 // Sets default values
 AShooterCharacter::AShooterCharacter() :
@@ -143,18 +144,29 @@ void AShooterCharacter::PrimaryAttack(const FInputActionValue& Value)
 		const FVector RotationAxis = Rotation.GetAxisX();
 		const FVector End = Start + RotationAxis * 50000.f;
 
+		FVector BeamEndPoint = End;
+
 		GetWorld()->LineTraceSingleByChannel(
 			PrimaryAttackHitResult, Start, End,
 			ECollisionChannel::ECC_Visibility
 		);
 		if(PrimaryAttackHitResult.bBlockingHit)
-		{
-			DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 2.f);
-			DrawDebugPoint(GetWorld(), PrimaryAttackHitResult.Location,
-				5.f, FColor::Red, false, 2.f);
+		{	
+			BeamEndPoint = PrimaryAttackHitResult.Location;
 
 			if(ImpactParticles)
 				UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactParticles, PrimaryAttackHitResult.Location);
+		}
+
+		if(BeamParticles)
+		{
+			UParticleSystemComponent* Beam = UGameplayStatics::SpawnEmitterAtLocation(
+				GetWorld(), BeamParticles, SocketTransform
+				);
+			if(Beam)
+			{
+				Beam->SetVectorParameter(FName("Target"), BeamEndPoint);
+			}
 		}
 	}	
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();

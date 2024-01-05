@@ -79,6 +79,10 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "VFX | Combat", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UParticleSystem> ImpactParticles;
 
+	/** Smoke trail for bullets */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "VFX | Combat", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UParticleSystem> BeamParticles;
+
 protected:
 
 	/** Handles the player movement */
