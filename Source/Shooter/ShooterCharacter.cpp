@@ -28,19 +28,20 @@ AShooterCharacter::AShooterCharacter() :
 	SpringArmComponent->SetupAttachment(RootComponent);
 	SpringArmComponent->TargetArmLength = 300.f;			// The camera follows at this distance behind the character
 	SpringArmComponent->bUsePawnControlRotation = true;		// Rotation based on the controller
+	SpringArmComponent->SocketOffset = FVector(0.f, 50.f, 50.f);
 
 	// Create the third person camera that is attached to the spring arm
 	ThirdPersonCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("ThirdPersonCamera"));
 	ThirdPersonCamera->SetupAttachment(SpringArmComponent, USpringArmComponent::SocketName); // Attach camera to spring arm
 	ThirdPersonCamera->bUsePawnControlRotation = false;		// Camera does not rotate relative to arm.
 
-	// Don't rotate when the controller rotates. Let the controller only affect camera
+	// Rotate the yaw when the controller rotates. For everything else, the controller only affect camera
 	bUseControllerRotationPitch = false;
-	bUseControllerRotationYaw = false;
+	bUseControllerRotationYaw = true;
 	bUseControllerRotationRoll = false;
 
 	// Configure character movement
-	GetCharacterMovement()->bOrientRotationToMovement = true;	// character moves in the direction of input...
+	GetCharacterMovement()->bOrientRotationToMovement = false;	// character does not move in the direction of input...
 	GetCharacterMovement()->RotationRate = FRotator(0.f, 540.f, 0.f);	// ...at this rotation rate
 	GetCharacterMovement()->JumpZVelocity = 600.f;
 	GetCharacterMovement()->AirControl = 0.2f;
