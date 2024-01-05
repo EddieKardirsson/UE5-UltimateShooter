@@ -152,6 +152,9 @@ void AShooterCharacter::PrimaryAttack(const FInputActionValue& Value)
 			DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 2.f);
 			DrawDebugPoint(GetWorld(), PrimaryAttackHitResult.Location,
 				5.f, FColor::Red, false, 2.f);
+
+			if(ImpactParticles)
+				UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactParticles, PrimaryAttackHitResult.Location);
 		}
 	}	
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
