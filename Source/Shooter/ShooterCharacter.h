@@ -96,6 +96,8 @@ protected:
 
 	/** Called when the primary attack button is pressed */
 	void PrimaryAttack(const FInputActionValue& Value);
+
+	bool GetBeamEndLocation(const FVector& MuzzleSocketLocation, FVector& OutBeamLocation);
 	
 public:
 
