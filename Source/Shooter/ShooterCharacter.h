@@ -63,6 +63,10 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "EnhancedInput | Combat", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UInputAction> PrimaryAttackAction;
 
+	/** Handles aiming */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "EnhancedInput | Combat", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UInputAction> AimAction;
+
 	/** Randomized gunshot MetaSound, default blueprint should be MS_Shot */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio | Combat", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<USoundBase> AttackSound;
@@ -83,6 +87,16 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "VFX | Combat", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UParticleSystem> BeamParticles;
 
+	/** Check if the player is aiming or not */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HUD Elements | Combat", meta = (AllowPrivateAccess = "true"))
+	bool bAiming;
+
+	/** Default Camera field of view value */
+	float CameraDefaultFOV;
+
+	/** Field of view value for when zoomed in */
+	float CameraZoomedFOV;
+
 protected:
 
 	/** Handles the player movement */
@@ -98,6 +112,11 @@ protected:
 	void PrimaryAttack(const FInputActionValue& Value);
 
 	bool GetBeamEndLocation(const FVector& MuzzleSocketLocation, FVector& OutBeamLocation);
+
+	/** Set bAiming to true */
+	void Aim(const FInputActionValue& Value);
+
+	void StopAim(const FInputActionValue& Value);
 	
 public:
 

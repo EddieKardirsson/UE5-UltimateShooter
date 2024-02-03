@@ -18,7 +18,10 @@
 
 // Sets default values
 AShooterCharacter::AShooterCharacter() :
-	bInvertPitchAxis(false)
+	bInvertPitchAxis(false),
+	bAiming(false),
+	CameraDefaultFOV(0.f),	// set in BeginPlay
+	CameraZoomedFOV(60.f)
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -52,7 +55,6 @@ void AShooterCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-
 	/* Setup and Configuration of the Enhanced Input system. It gets the controller,
 	 * checks the subsystem and gets the local player and then connect the IMC to the controller. */
 	if(const APlayerController* PlayerController = Cast<APlayerController>(GetController()))
@@ -62,6 +64,11 @@ void AShooterCharacter::BeginPlay()
 		{
 			Subsystem->AddMappingContext(PlayerContext, 0);
 		}
+	}
+
+	if(ThirdPersonCamera)
+	{
+		CameraDefaultFOV = GetThirdPersonCamera()->FieldOfView;
 	}
 }
 
@@ -85,6 +92,8 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &AShooterCharacter::Jump);
 		EnhancedInputComponent->BindAction(PrimaryAttackAction, ETriggerEvent::Started, this, &AShooterCharacter::PrimaryAttack);
 		EnhancedInputComponent->BindAction(PrimaryAttackAction, ETriggerEvent::Canceled, this, &AShooterCharacter::PrimaryAttack);
+		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Started, this, &AShooterCharacter::Aim);
+		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Completed, this, &AShooterCharacter::StopAim);
 	}
 
 }
@@ -230,4 +239,23 @@ bool AShooterCharacter::GetBeamEndLocation(const FVector& MuzzleSocketLocation, 
 	}
 	
 	return false;
+}
+
+void AShooterCharacter::Aim(const FInputActionValue& Value)
+{
+	bAiming = true;
+	GetThirdPersonCamera()->SetFieldOfView(CameraZoomedFOV);
+
+	// Add debug logs
+	UE_LOG(LogTemp, Warning, TEXT("Aim called. bAiming: %d"), bAiming);
+}
+
+void AShooterCharacter::StopAim(const FInputActionValue& Value)
+{
+	bAiming = false;
+	GetThirdPersonCamera()->SetFieldOfView(CameraDefaultFOV);
+
+	// Add a debug log
+	UE_LOG(LogTemp, Warning, TEXT("StopAim called"));
+	UE_LOG(LogTemp, Warning, TEXT("StopAim called. bAiming: %d"), bAiming);
 }
