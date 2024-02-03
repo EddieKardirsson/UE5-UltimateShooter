@@ -21,7 +21,9 @@ AShooterCharacter::AShooterCharacter() :
 	bInvertPitchAxis(false),
 	bAiming(false),
 	CameraDefaultFOV(0.f),	// set in BeginPlay
-	CameraZoomedFOV(60.f)
+	CameraZoomedFOV(35.f),
+	CameraCurrentFOV(0.f),	// set in BeginPlay
+	ZoomInterpSpeed(20.f)
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -29,9 +31,9 @@ AShooterCharacter::AShooterCharacter() :
 	// Create a spring arm (pulls in towards character if there is a collision)
 	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComponent"));
 	SpringArmComponent->SetupAttachment(RootComponent);
-	SpringArmComponent->TargetArmLength = 300.f;			// The camera follows at this distance behind the character
+	SpringArmComponent->TargetArmLength = 180.f;			// The camera follows at this distance behind the character
 	SpringArmComponent->bUsePawnControlRotation = true;		// Rotation based on the controller
-	SpringArmComponent->SocketOffset = FVector(0.f, 50.f, 50.f);
+	SpringArmComponent->SocketOffset = FVector(0.f, 50.f, 70.f);
 
 	// Create the third person camera that is attached to the spring arm
 	ThirdPersonCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("ThirdPersonCamera"));
@@ -69,6 +71,7 @@ void AShooterCharacter::BeginPlay()
 	if(ThirdPersonCamera)
 	{
 		CameraDefaultFOV = GetThirdPersonCamera()->FieldOfView;
+		CameraCurrentFOV = CameraDefaultFOV;
 	}
 }
 
@@ -77,6 +80,8 @@ void AShooterCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);	
 
+	// Set current camera field of view
+	InterpolateCameraFOV(DeltaTime);
 }
 
 // Called to bind functionality to input
@@ -244,7 +249,6 @@ bool AShooterCharacter::GetBeamEndLocation(const FVector& MuzzleSocketLocation, 
 void AShooterCharacter::Aim(const FInputActionValue& Value)
 {
 	bAiming = true;
-	GetThirdPersonCamera()->SetFieldOfView(CameraZoomedFOV);
 
 	// Add debug logs
 	UE_LOG(LogTemp, Warning, TEXT("Aim called. bAiming: %d"), bAiming);
@@ -253,9 +257,23 @@ void AShooterCharacter::Aim(const FInputActionValue& Value)
 void AShooterCharacter::StopAim(const FInputActionValue& Value)
 {
 	bAiming = false;
-	GetThirdPersonCamera()->SetFieldOfView(CameraDefaultFOV);
 
 	// Add a debug log
 	UE_LOG(LogTemp, Warning, TEXT("StopAim called"));
 	UE_LOG(LogTemp, Warning, TEXT("StopAim called. bAiming: %d"), bAiming);
+}
+
+void AShooterCharacter::InterpolateCameraFOV(float DeltaTime)
+{
+	if(bAiming)
+	{
+		// Interpolate to zoomed FOV
+		CameraCurrentFOV  = FMath::FInterpTo(CameraCurrentFOV, CameraZoomedFOV, DeltaTime, ZoomInterpSpeed);		
+	}
+	else
+	{
+		// Interpolate to default FOV
+		CameraCurrentFOV = FMath::FInterpTo(CameraCurrentFOV, CameraDefaultFOV, DeltaTime, ZoomInterpSpeed);
+	}
+	GetThirdPersonCamera()->SetFieldOfView(CameraCurrentFOV);
 }

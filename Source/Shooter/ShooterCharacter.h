@@ -97,6 +97,13 @@ private:
 	/** Field of view value for when zoomed in */
 	float CameraZoomedFOV;
 
+	/** Current field of view this fram */
+	float CameraCurrentFOV;
+
+	/** Interpolation speed for zooming when aiming */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD Elements | Combat", meta = (AllowPrivateAccess = "true"))
+	float ZoomInterpSpeed;
+
 protected:
 
 	/** Handles the player movement */
@@ -117,6 +124,8 @@ protected:
 	void Aim(const FInputActionValue& Value);
 
 	void StopAim(const FInputActionValue& Value);
+
+	void InterpolateCameraFOV(float DeltaTime);
 	
 public:
 
