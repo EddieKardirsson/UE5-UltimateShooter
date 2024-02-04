@@ -18,6 +18,9 @@
 
 // Sets default values
 AShooterCharacter::AShooterCharacter() :
+	LookRate(45.f),
+	HipLookRate(90.f),
+	AimingLookRate(20.f),
 	bInvertPitchAxis(false),
 	bAiming(false),
 	CameraDefaultFOV(0.f),	// set in BeginPlay
@@ -82,6 +85,9 @@ void AShooterCharacter::Tick(float DeltaTime)
 
 	// Set current camera field of view
 	InterpolateCameraFOV(DeltaTime);
+
+	// Change Look sensitivity depending on aiming or not
+	SetLookRate();
 }
 
 // Called to bind functionality to input
@@ -108,7 +114,8 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
  * the MovementInput */
 void AShooterCharacter::Move(const FInputActionValue& Value)
 {
-	const FVector2D MovementVector = Value.Get<FVector2D>();
+	const float MovementSpeed = GetMovementComponent()->GetMaxSpeed();
+	const FVector2D MovementVector = Value.Get<FVector2D>() * GetWorld()->GetDeltaSeconds() * MovementSpeed;
 
 	const FRotator Rotation = GetController()->GetControlRotation();
 	const FRotator YawRotation = FRotator(0.f, Rotation.Yaw, 0.f);
@@ -124,7 +131,7 @@ void AShooterCharacter::Move(const FInputActionValue& Value)
  * the controller pitch and yaw to adjust the camera position. */
 void AShooterCharacter::Look(const FInputActionValue& Value)
 {
-	const FVector2D LookAxisVector = Value.Get<FVector2D>();
+	const FVector2D LookAxisVector = Value.Get<FVector2D>() * GetWorld()->GetDeltaSeconds() * LookRate;
 
 	if(bInvertPitchAxis)
 		AddControllerPitchInput(-LookAxisVector.Y);
@@ -276,4 +283,12 @@ void AShooterCharacter::InterpolateCameraFOV(float DeltaTime)
 		CameraCurrentFOV = FMath::FInterpTo(CameraCurrentFOV, CameraDefaultFOV, DeltaTime, ZoomInterpSpeed);
 	}
 	GetThirdPersonCamera()->SetFieldOfView(CameraCurrentFOV);
+}
+
+void AShooterCharacter::SetLookRate()
+{
+	if(bAiming)
+		LookRate = AimingLookRate;
+	else
+		LookRate = HipLookRate;
 }

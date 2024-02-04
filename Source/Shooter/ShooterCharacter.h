@@ -38,6 +38,18 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UCameraComponent> ThirdPersonCamera;
 
+	/** Base looking rate for mouse and right thumbsticks, degree per (delta)second */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
+	float LookRate;
+
+	/** Look rate while not aiming */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
+	float HipLookRate;
+
+	/** Look rate while aiming */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
+	float AimingLookRate;
+
 	/** This property is to invert the values for the camera pitch (i.e. Pilot mode) */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera", meta = (AllowPrivateAccess = "true"))
 	bool bInvertPitchAxis;
@@ -102,7 +114,7 @@ private:
 
 	/** Interpolation speed for zooming when aiming */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD Elements | Combat", meta = (AllowPrivateAccess = "true"))
-	float ZoomInterpSpeed;
+	float ZoomInterpSpeed;	
 
 protected:
 
@@ -120,12 +132,12 @@ protected:
 
 	bool GetBeamEndLocation(const FVector& MuzzleSocketLocation, FVector& OutBeamLocation);
 
-	/** Set bAiming to true */
+	/** Set bAiming to true or false */
 	void Aim(const FInputActionValue& Value);
-
 	void StopAim(const FInputActionValue& Value);
 
 	void InterpolateCameraFOV(float DeltaTime);
+	void SetLookRate();
 	
 public:
 
