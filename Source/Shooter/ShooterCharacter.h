@@ -133,6 +133,8 @@ public:
 	FORCEINLINE USpringArmComponent* GetSpringArmComponent() const { return SpringArmComponent; }
 
 	/** Returns ThirdPersonCamera sub-object */
-	FORCEINLINE UCameraComponent* GetThirdPersonCamera() const { return ThirdPersonCamera; }	
+	FORCEINLINE UCameraComponent* GetThirdPersonCamera() const { return ThirdPersonCamera; }
+
+	FORCEINLINE bool GetAiming() const { return bAiming; }
 
 };

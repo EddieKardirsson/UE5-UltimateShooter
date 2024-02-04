@@ -6,6 +6,16 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 
+UShooterAnimInstance::UShooterAnimInstance() :
+	Speed(0.f),
+	bIsInAir(false),
+	bIsAccelerating(false),
+	MovementOffsetYaw(0.f),
+	LastMovementOffsetYaw(0.f),
+	bAiming(false)
+{
+}
+
 void UShooterAnimInstance::UpdateAnimationProperties(float DeltaTime)
 {
 	if(!ShooterCharacter)
@@ -35,6 +45,8 @@ void UShooterAnimInstance::UpdateAnimationProperties(float DeltaTime)
 
 		if(ShooterCharacter->GetVelocity().Size() > 0.f)
 			LastMovementOffsetYaw = MovementOffsetYaw;
+
+		bAiming = ShooterCharacter->GetAiming();
 
 		FString LastOffset = FString::Printf(TEXT("LastMovementOffsetYaw: %f"), LastMovementOffsetYaw);
 		FString CurrentVelocity = FString::Printf(TEXT("CurrentVelocity: %f"), ShooterCharacter->GetVelocity().Size());

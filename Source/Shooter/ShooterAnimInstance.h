@@ -16,7 +16,9 @@ class SHOOTER_API UShooterAnimInstance : public UAnimInstance
 	GENERATED_BODY()
 
 public:
-
+	
+	UShooterAnimInstance();
+	
 	/** The "tick" function */
 	UFUNCTION(BlueprintCallable)
 	void UpdateAnimationProperties(float DeltaTime);
@@ -48,5 +50,8 @@ private:
 	/** Offset yaw the frame before stop moving */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement", meta =(AllowPrivateAccess = "true"))
 	float LastMovementOffsetYaw;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement", meta =(AllowPrivateAccess = "true"))
+	bool bAiming;
 	
 };
