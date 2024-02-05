@@ -114,7 +114,27 @@ private:
 
 	/** Interpolation speed for zooming when aiming */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "HUD Elements | Combat", meta = (AllowPrivateAccess = "true"))
-	float ZoomInterpSpeed;	
+	float ZoomInterpSpeed;
+
+	/** Determines the spread of the crosshair  */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HUD Elements | Crosshair", meta = (AllowPrivateAccess = "true"))
+	float CrosshairSpreadMultiplier;
+
+	/** Velocity component for crosshair spread */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HUD Elements | Crosshair", meta = (AllowPrivateAccess = "true"))
+	float CrosshairVelocityFactor;
+
+	/** In air component for crosshair spread */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HUD Elements | Crosshair", meta = (AllowPrivateAccess = "true"))
+	float CrosshairInAirFactor;
+
+	/** Aim component for crosshair spread */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HUD Elements | Crosshair", meta = (AllowPrivateAccess = "true"))
+	float CrosshairAimFactor;
+
+	/** Shooting component for crosshair spread */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HUD Elements | Crosshair", meta = (AllowPrivateAccess = "true"))
+	float CrosshairShootingFactor;
 
 protected:
 
@@ -138,6 +158,8 @@ protected:
 
 	void InterpolateCameraFOV(float DeltaTime);
 	void SetLookRate();
+
+	void CalculateCrosshairSpread(float DeltaTime);
 	
 public:
 
@@ -148,5 +170,8 @@ public:
 	FORCEINLINE UCameraComponent* GetThirdPersonCamera() const { return ThirdPersonCamera; }
 
 	FORCEINLINE bool GetAiming() const { return bAiming; }
+
+	UFUNCTION(BlueprintCallable)
+	float GetCrosshairSpreadMultiplier() const;
 
 };

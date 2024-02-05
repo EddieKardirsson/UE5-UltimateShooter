@@ -26,7 +26,12 @@ AShooterCharacter::AShooterCharacter() :
 	CameraDefaultFOV(0.f),	// set in BeginPlay
 	CameraZoomedFOV(35.f),
 	CameraCurrentFOV(0.f),	// set in BeginPlay
-	ZoomInterpSpeed(20.f)
+	ZoomInterpSpeed(20.f),
+	CrosshairSpreadMultiplier(0.f),
+	CrosshairVelocityFactor(0.f),
+	CrosshairInAirFactor(0.f),
+	CrosshairAimFactor(0.f),
+	CrosshairShootingFactor(0.f)
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -88,6 +93,9 @@ void AShooterCharacter::Tick(float DeltaTime)
 
 	// Change Look sensitivity depending on aiming or not
 	SetLookRate();
+
+	// Calculate crosshair spread multiplier
+	CalculateCrosshairSpread(DeltaTime);
 }
 
 // Called to bind functionality to input
@@ -291,4 +299,24 @@ void AShooterCharacter::SetLookRate()
 		LookRate = AimingLookRate;
 	else
 		LookRate = HipLookRate;
+}
+
+void AShooterCharacter::CalculateCrosshairSpread(float DeltaTime)
+{
+	FVector2D WalkSpeedRange{0.f, 600.f };
+	FVector2D VelocityMultiplierRange{ 0.f, 1.f };
+	FVector Velocity = GetVelocity();
+	Velocity.Z = 0.f;
+
+	CrosshairVelocityFactor = FMath::GetMappedRangeValueClamped(
+		WalkSpeedRange,
+		VelocityMultiplierRange,
+		Velocity.Size());
+	
+	CrosshairSpreadMultiplier = 0.5f + CrosshairVelocityFactor;
+}
+
+float AShooterCharacter::GetCrosshairSpreadMultiplier() const
+{
+	return CrosshairSpreadMultiplier;
 }
