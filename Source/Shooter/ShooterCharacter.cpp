@@ -16,7 +16,7 @@
 #include "DrawDebugHelpers.h"
 #include "Particles/ParticleSystemComponent.h"
 
-// Sets default values
+// Sets default values in the initializer list
 AShooterCharacter::AShooterCharacter() :
 	LookRate(45.f),
 	HipLookRate(90.f),
@@ -308,12 +308,24 @@ void AShooterCharacter::CalculateCrosshairSpread(float DeltaTime)
 	FVector Velocity = GetVelocity();
 	Velocity.Z = 0.f;
 
+	// Calculate crosshair velocity factor
 	CrosshairVelocityFactor = FMath::GetMappedRangeValueClamped(
 		WalkSpeedRange,
 		VelocityMultiplierRange,
 		Velocity.Size());
-	
-	CrosshairSpreadMultiplier = 0.5f + CrosshairVelocityFactor;
+
+	// Calculate crosshair in air factor
+	if(GetCharacterMovement()->IsFalling())	// is in air?
+	{
+		// Spread the crosshair slowly while in air
+		CrosshairInAirFactor = FMath::FInterpTo(CrosshairInAirFactor, 2.25f, DeltaTime, 2.25f);
+	}
+	else	// Character is on the ground
+	{
+		// Shrink the crosshair rapidly while on the ground
+		CrosshairInAirFactor = FMath::FInterpTo(CrosshairInAirFactor, 0.f, DeltaTime, 30.f);
+	}
+	CrosshairSpreadMultiplier = 0.5f + CrosshairVelocityFactor + CrosshairInAirFactor;
 }
 
 float AShooterCharacter::GetCrosshairSpreadMultiplier() const
