@@ -136,10 +136,6 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HUD Elements | Crosshair", meta = (AllowPrivateAccess = "true"))
 	float CrosshairShootingFactor;
 
-	float ShootTimeDuration;
-	bool bFiringBullet;
-	FTimerHandle CrosshairShootTimer;
-
 protected:
 
 	/** Handles the player movement */
@@ -164,11 +160,6 @@ protected:
 	void SetLookRate();
 
 	void CalculateCrosshairSpread(float DeltaTime);
-
-	void StartCrosshairBulletFire();
-
-	UFUNCTION()
-	void FinishCrosshairBulletFire();
 	
 public:
 
