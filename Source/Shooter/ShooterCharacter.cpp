@@ -325,7 +325,20 @@ void AShooterCharacter::CalculateCrosshairSpread(float DeltaTime)
 		// Shrink the crosshair rapidly while on the ground
 		CrosshairInAirFactor = FMath::FInterpTo(CrosshairInAirFactor, 0.f, DeltaTime, 30.f);
 	}
-	CrosshairSpreadMultiplier = 0.5f + CrosshairVelocityFactor + CrosshairInAirFactor;
+
+	// Calculate crosshair aim factor
+	if(bAiming)	// Are we aiming?
+	{
+		// Shrink crosshair a small amount very quickly
+		CrosshairAimFactor = FMath::FInterpTo(CrosshairAimFactor, 0.6f, DeltaTime, 30.f);
+	}
+	else		// Not aiming
+	{
+		// Spread crosshair back to normal very quickly
+		CrosshairAimFactor = FMath::FInterpTo(CrosshairAimFactor, 0.f, DeltaTime, 30.f);
+	}
+	
+	CrosshairSpreadMultiplier = 0.5f + CrosshairVelocityFactor + CrosshairInAirFactor - CrosshairAimFactor;
 }
 
 float AShooterCharacter::GetCrosshairSpreadMultiplier() const
