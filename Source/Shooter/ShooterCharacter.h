@@ -24,6 +24,7 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -78,6 +79,10 @@ private:
 	/** Handles aiming */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "EnhancedInput | Combat", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UInputAction> AimAction;
+
+	/** Toggle between automatic or single shot */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "EnhancedInput | Combat", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UInputAction> ToggleAutomaticPrimaryAttackAction;
 
 	/** Randomized gunshot MetaSound, default blueprint should be MS_Shot */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio | Combat", meta = (AllowPrivateAccess = "true"))
@@ -136,6 +141,21 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HUD Elements | Crosshair", meta = (AllowPrivateAccess = "true"))
 	float CrosshairShootingFactor;
 
+	/** Left mouse button or right console trigger pressed */
+	bool bPrimaryAttackButtonPressed;
+
+	/** True when we can fire, false when waiting for the timer */
+	bool bShouldFire;
+
+	/** Rate of automatic gunfire */
+	float AutomaticFireRate;
+
+	/** Toggle automatic on and off */
+	bool bToggleAutomaticPrimaryAttack;
+
+	/** Set a timer between gunshots */
+	FTimerHandle AutoFireTimer;
+
 	float ShootTimeDuration;
 	bool bFiringBullet;
 	FTimerHandle CrosshairShootTimer;
@@ -166,6 +186,17 @@ protected:
 	void SetLookRate();
 
 	void CalculateCrosshairSpread(float DeltaTime);
+
+	void PrimaryAttackButtonPressed(const FInputActionValue& Value);
+	void PrimaryAttackButtonReleased(const FInputActionValue& Value);
+
+	void StartPrimaryAttackTimer(const FInputActionValue& Value);
+
+	UFUNCTION()
+	void AutoFireReset(const FInputActionValue& Value);
+
+	/** Press the toggle button to switch between single shots or automatic fire */
+	void ToggleAutomaticPrimaryAttack(const FInputActionValue& Value);
 	
 	void StartCrosshairBulletFire();
 

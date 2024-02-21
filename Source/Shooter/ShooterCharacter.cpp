@@ -32,6 +32,10 @@ AShooterCharacter::AShooterCharacter() :
 	CrosshairInAirFactor(0.f),
 	CrosshairAimFactor(0.f),
 	CrosshairShootingFactor(0.f),
+	bPrimaryAttackButtonPressed(false),
+	bShouldFire(true),
+	AutomaticFireRate(0.1f),
+	bToggleAutomaticPrimaryAttack(false),
 	ShootTimeDuration(0.05f),
 	bFiringBullet(false)
 {
@@ -111,8 +115,11 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AShooterCharacter::Move);
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AShooterCharacter::Look);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &AShooterCharacter::Jump);
-		EnhancedInputComponent->BindAction(PrimaryAttackAction, ETriggerEvent::Started, this, &AShooterCharacter::PrimaryAttack);
-		EnhancedInputComponent->BindAction(PrimaryAttackAction, ETriggerEvent::Canceled, this, &AShooterCharacter::PrimaryAttack);
+		//EnhancedInputComponent->BindAction(PrimaryAttackAction, ETriggerEvent::Started, this, &AShooterCharacter::PrimaryAttack);
+		//EnhancedInputComponent->BindAction(PrimaryAttackAction, ETriggerEvent::Canceled, this, &AShooterCharacter::PrimaryAttack);
+		EnhancedInputComponent->BindAction(PrimaryAttackAction, ETriggerEvent::Started, this, &AShooterCharacter::PrimaryAttackButtonPressed);
+		EnhancedInputComponent->BindAction(PrimaryAttackAction, ETriggerEvent::Completed, this, &AShooterCharacter::PrimaryAttackButtonReleased);		
+		EnhancedInputComponent->BindAction(ToggleAutomaticPrimaryAttackAction, ETriggerEvent::Started, this, &AShooterCharacter::ToggleAutomaticPrimaryAttack);
 		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Started, this, &AShooterCharacter::Aim);
 		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Completed, this, &AShooterCharacter::StopAim);
 	}
@@ -353,6 +360,57 @@ void AShooterCharacter::CalculateCrosshairSpread(float DeltaTime)
 	}
 	
 	CrosshairSpreadMultiplier = 0.5f + CrosshairVelocityFactor + CrosshairInAirFactor - CrosshairAimFactor + CrosshairShootingFactor;
+}
+
+void AShooterCharacter::PrimaryAttackButtonPressed(const FInputActionValue& Value)
+{
+	bPrimaryAttackButtonPressed = true;
+	StartPrimaryAttackTimer(Value);
+}
+
+void AShooterCharacter::PrimaryAttackButtonReleased(const FInputActionValue& Value)
+{
+	bPrimaryAttackButtonPressed = false;
+}
+
+void AShooterCharacter::StartPrimaryAttackTimer(const FInputActionValue& Value)
+{
+	// Check if rifle is set to automatic
+	if(bToggleAutomaticPrimaryAttack)	// if true -> start the automatic firing sequence
+	{
+		if(bShouldFire)
+		{
+			PrimaryAttack(Value);
+			bShouldFire = false;
+			FTimerDelegate TimerDel;
+			TimerDel.BindUFunction(this, FName(TEXT("AutoFireReset")), Value); // Check if this works
+			GetWorldTimerManager().SetTimer(AutoFireTimer, TimerDel, AutomaticFireRate, false);
+		}	
+	}
+	else	// false? -> do the original single shot
+	{
+		PrimaryAttack(Value);
+	}
+}
+
+void AShooterCharacter::AutoFireReset(const FInputActionValue& Value)
+{	
+	bShouldFire = true;
+	if(bPrimaryAttackButtonPressed)
+	{
+		StartPrimaryAttackTimer(Value);
+	}
+}
+
+void AShooterCharacter::ToggleAutomaticPrimaryAttack(const FInputActionValue& Value)
+{
+	if(bToggleAutomaticPrimaryAttack)
+		bToggleAutomaticPrimaryAttack = false;
+	else
+		bToggleAutomaticPrimaryAttack = true;
+
+	FString ToggleValue = FString::Printf(TEXT("bToggleAutomaticPrimaryAttack: %s"), bToggleAutomaticPrimaryAttack? TEXT("true") : TEXT("false"));
+	if(GEngine) GEngine->AddOnScreenDebugMessage(3, 2.f, FColor::Orange, ToggleValue);
 }
 
 void AShooterCharacter::StartCrosshairBulletFire()
