@@ -19,7 +19,7 @@ public:
 
 protected:
 	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+	virtual void BeginPlay() override;	
 
 public:	
 	// Called every frame
@@ -160,7 +160,11 @@ private:
 	bool bFiringBullet;
 	FTimerHandle CrosshairShootTimer;
 
+	/** True if we should trace every frame for items */
+	bool bShouldTraceForItems;
 
+	/** Number of overlapped AItems */
+	int8 OverlappedItemCount;
 
 protected:
 
@@ -203,6 +207,12 @@ protected:
 	UFUNCTION()
 	void FinishCrosshairBulletFire();
 
+	/** Linetrace for items under the crosshair */
+	bool TraceUnderCrosshair(FHitResult& OutHitResult, FVector& OutHitLocation);
+
+	/** Trace for items if OverlappedItemCount > 0 */
+	void TraceForItems();
+
 	
 public:
 
@@ -216,5 +226,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	float GetCrosshairSpreadMultiplier() const;
+
+	FORCEINLINE int8 GetOverlappedItemCount() const { return OverlappedItemCount; }
+
+	/** Adds/Subtracts to/frokm OverlappedItemCount and updates bShouldTraceForItems */
+	void IncrementOverlappedItemCount(int8 Amount);
 
 };
