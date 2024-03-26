@@ -42,6 +42,10 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Properties", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class USphereComponent> AreaSphere;
 
+	/** The name which appears on the Pickup Widget */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Properties", meta = (AllowPrivateAccess = "true"))
+	FString ItemName;
+
 protected:
 
 	/** Called when overlapping AreaSphere */
