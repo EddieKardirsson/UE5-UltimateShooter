@@ -40,7 +40,8 @@ AShooterCharacter::AShooterCharacter() :
 	bToggleAutomaticPrimaryAttack(false),
 	ShootTimeDuration(0.05f),
 	bFiringBullet(false),
-	bShouldTraceForItems(false) // Item trace variables
+	bShouldTraceForItems(false), // Item trace variables
+	TraceHitItemLastFrame(nullptr)
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -467,7 +468,27 @@ void AShooterCharacter::TraceForItems()
 				// Show Item's Pickup Widget
 				HitItem->GetPickupWidget()->SetVisibility(true);
 			}
+
+			// if we hit an AItem last frame
+			if(TraceHitItemLastFrame)
+			{
+				if(HitItem != TraceHitItemLastFrame)
+				{
+					// We are hitting a different AItem this frame from last frame
+					// Or AItem is null
+					TraceHitItemLastFrame->GetPickupWidget()->SetVisibility(false);
+				}
+			}
+			
+			// Store a reference to HitItem for next frame
+			TraceHitItemLastFrame = HitItem;
 		}
+	}
+	else if (TraceHitItemLastFrame)
+	{
+		// No longer overlapping any items,
+		// Item last frame should not show widget
+		TraceHitItemLastFrame->GetPickupWidget()->SetVisibility(false);
 	}
 }
 

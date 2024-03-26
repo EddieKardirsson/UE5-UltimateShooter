@@ -166,6 +166,13 @@ private:
 	/** Number of overlapped AItems */
 	int8 OverlappedItemCount;
 
+	/** The AItem we hit last frame */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Items", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class AItem> TraceHitItemLastFrame;
+
+	
+	
+
 protected:
 
 	/** Handles the player movement */
