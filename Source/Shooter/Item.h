@@ -5,7 +5,21 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "UObject/ObjectPtr.h"
+#include "Containers/EnumAsByte.h"
 #include "Item.generated.h"
+
+UENUM(BlueprintType)
+enum EItemRarity : uint8
+{
+	EIR_Damaged UMETA(DisplayName = "Damaged"),
+	EIR_Common UMETA(DisplayName = "Common"),
+	EIR_Uncommon UMETA(DisplayName = "Uncommon"),
+	EIR_Rare UMETA(DisplayName = "Rare"),
+	EIR_Epic UMETA(DisplayName = "Epic"),
+	EIR_Legendary UMETA(DisplayName = "Legendary"),
+
+	EIR_MAX UMETA(DisplayName = "DefaultMAX")
+};
 
 UCLASS()
 class SHOOTER_API AItem : public AActor
@@ -50,6 +64,13 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Properties", meta = (AllowPrivateAccess = "true"))
 	int32 ItemCount;
 
+	/** Item rarity - determines number of stars i pickup widget */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Item Properties", meta = (AllowPrivateAccess = "true"))
+	TEnumAsByte<EItemRarity> ItemRarity;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item Properties", meta = (AllowPrivateAccess = "true"))
+	TArray<bool>ActiveStars;
+
 protected:
 
 	/** Called when overlapping AreaSphere */
@@ -68,6 +89,9 @@ protected:
 		AActor* OtherActor,
 		UPrimitiveComponent* OtherComp,
 		int32 OtherBodyIndex);
+
+	/** Sets the ActiveStars array of bools based on rarity */
+	void SetActiveStars();
 
 public:
 
