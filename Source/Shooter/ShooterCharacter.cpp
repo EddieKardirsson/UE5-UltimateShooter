@@ -508,6 +508,7 @@ void AShooterCharacter::SpawnDefaultWeapon()
 		const USkeletalMeshSocket* HandSocket = GetMesh()->GetSocketByName(FName("RightHandSocket"));
 		if(HandSocket) //Attach the weapon to the right hand socket
 			HandSocket->AttachActor(DefaultWeapon, GetMesh());
+		EquippedWeapon = DefaultWeapon;
 	}
 }
 
