@@ -15,6 +15,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "DrawDebugHelpers.h"
 #include "Item.h"
+#include "Weapon.h"
 #include "Components/WidgetComponent.h"
 #include "Particles/ParticleSystemComponent.h"
 
@@ -41,7 +42,9 @@ AShooterCharacter::AShooterCharacter() :
 	ShootTimeDuration(0.05f),
 	bFiringBullet(false),
 	bShouldTraceForItems(false), // Item trace variables
-	TraceHitItemLastFrame(nullptr)
+	TraceHitItemLastFrame(nullptr),
+	EquippedWeapon(nullptr),	// Weapon class variables
+	DefaultWeaponClass(nullptr)
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -91,6 +94,9 @@ void AShooterCharacter::BeginPlay()
 		CameraDefaultFOV = GetThirdPersonCamera()->FieldOfView;
 		CameraCurrentFOV = CameraDefaultFOV;
 	}
+
+	// Spawn the default weapon and attach it to the mesh
+	SpawnDefaultWeapon();
 }
 
 
@@ -489,6 +495,19 @@ void AShooterCharacter::TraceForItems()
 		// No longer overlapping any items,
 		// Item last frame should not show widget
 		TraceHitItemLastFrame->GetPickupWidget()->SetVisibility(false);
+	}
+}
+
+void AShooterCharacter::SpawnDefaultWeapon()
+{
+	// check the TSubClassOf variable
+	if(DefaultWeaponClass)
+	{
+		// Spawn the weapon, Get the handsocket
+		AWeapon* DefaultWeapon = GetWorld()->SpawnActor<AWeapon>(DefaultWeaponClass);
+		const USkeletalMeshSocket* HandSocket = GetMesh()->GetSocketByName(FName("RightHandSocket"));
+		if(HandSocket) //Attach the weapon to the right hand socket
+			HandSocket->AttachActor(DefaultWeapon, GetMesh());
 	}
 }
 
