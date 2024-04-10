@@ -515,11 +515,7 @@ AWeapon* AShooterCharacter::SpawnDefaultWeapon()
 void AShooterCharacter::EquipWeapon(AWeapon* WeaponToEquip)
 {
 	if(WeaponToEquip)
-	{
-		// Set AreaSphere and CollisionBox to ignore all Collision Channels
-		WeaponToEquip->GetAreaSphere()->SetCollisionResponseToChannels(ECollisionResponse::ECR_Ignore);
-		WeaponToEquip->GetCollisionBox()->SetCollisionResponseToChannels(ECollisionResponse::ECR_Ignore);
-		
+	{		
 		// Get the hand socket
 		const USkeletalMeshSocket* HandSocket = GetMesh()->GetSocketByName(FName("RightHandSocket"));
 		if(HandSocket) //Attach the weapon to the right hand socket
@@ -527,6 +523,7 @@ void AShooterCharacter::EquipWeapon(AWeapon* WeaponToEquip)
 
 		// Set the equipped weapon with the new weapon to equip
 		EquippedWeapon = WeaponToEquip;
+		EquippedWeapon->SetItemState(EItemState::EIS_Equipped);
 	}
 }
 
