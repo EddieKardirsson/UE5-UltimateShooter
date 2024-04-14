@@ -84,6 +84,10 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "EnhancedInput | Combat", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UInputAction> ToggleAutomaticPrimaryAttackAction;
 
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "EnhancedInput | Actions", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UInputAction> SelectAction;
+
 	/** Randomized gunshot MetaSound, default blueprint should be MS_Shot */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio | Combat", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<USoundBase> AttackSound;
@@ -230,6 +234,13 @@ protected:
 
 	/** Takes a weapon and attaches it to the mesh */
 	void EquipWeapon(AWeapon* WeaponToEquip);
+
+	/** Detach weapon and let it fall to the ground */
+	void DropWeapon();
+
+
+	void SelectButtonPressed(const FInputActionValue& Value);
+	void SelectButtonReleased(const FInputActionValue& Value);
 	
 public:
 

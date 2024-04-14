@@ -138,6 +138,8 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 		EnhancedInputComponent->BindAction(ToggleAutomaticPrimaryAttackAction, ETriggerEvent::Started, this, &AShooterCharacter::ToggleAutomaticPrimaryAttack);
 		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Started, this, &AShooterCharacter::Aim);
 		EnhancedInputComponent->BindAction(AimAction, ETriggerEvent::Completed, this, &AShooterCharacter::StopAim);
+		EnhancedInputComponent->BindAction(SelectAction, ETriggerEvent::Triggered, this, &AShooterCharacter::SelectButtonPressed);
+		//EnhancedInputComponent->BindAction(SelectAction, ETriggerEvent::Triggered, this, &AShooterCharacter::SelectButtonReleased);
 	}
 
 }
@@ -525,6 +527,25 @@ void AShooterCharacter::EquipWeapon(AWeapon* WeaponToEquip)
 		EquippedWeapon = WeaponToEquip;
 		EquippedWeapon->SetItemState(EItemState::EIS_Equipped);
 	}
+}
+
+void AShooterCharacter::DropWeapon()
+{
+	if(EquippedWeapon)
+	{
+		FDetachmentTransformRules DetachmentTransformRules(EDetachmentRule::KeepWorld, true);
+		EquippedWeapon->GetItemMesh()->DetachFromComponent(DetachmentTransformRules);
+	}
+}
+
+void AShooterCharacter::SelectButtonPressed(const FInputActionValue& Value)
+{
+	DropWeapon();
+}
+
+void AShooterCharacter::SelectButtonReleased(const FInputActionValue& Value)
+{
+	
 }
 
 float AShooterCharacter::GetCrosshairSpreadMultiplier() const
