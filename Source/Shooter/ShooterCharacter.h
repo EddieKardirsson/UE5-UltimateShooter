@@ -182,6 +182,10 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<AWeapon> DefaultWeaponClass;
 
+	/** The ite currently hit by our trace in TraceForItems (could be null) */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,  Category = "Combat", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<AItem> TraceHitItem;
+
 protected:
 
 	/** Handles the player movement */
@@ -241,6 +245,9 @@ protected:
 
 	void SelectButtonPressed(const FInputActionValue& Value);
 	void SelectButtonReleased(const FInputActionValue& Value);
+
+	/** Drops currently equipped Weapon and equips TaceHitItem */
+	void SwapWeapon(AWeapon* WeaponToSwap);
 	
 public:
 
